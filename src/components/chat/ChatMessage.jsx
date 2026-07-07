@@ -1,4 +1,5 @@
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 function Avatar({ role }) {
   if (role === "user") {
@@ -33,12 +34,14 @@ export default function ChatMessage({ role, content, isError = false }) {
           ${isUser
             ? "bg-amber-500/10 border border-amber-500/20 text-stone-100"
             : isError
-            ? "border border-red-500/30 bg-red-500/5 text-red-300"
-            : "bg-stone-900/70 border border-stone-800 text-stone-100"
+              ? "border border-red-500/30 bg-red-500/5 text-red-300"
+              : "bg-stone-900/70 border border-stone-800 text-stone-100"
           }`}
       >
         <div className="prose prose-invert prose-sm max-w-none prose-p:my-1.5 prose-pre:bg-stone-950 prose-pre:border prose-pre:border-stone-800 prose-code:text-amber-300">
-          <ReactMarkdown>{content}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {content}
+          </ReactMarkdown>
         </div>
       </div>
     </div>
