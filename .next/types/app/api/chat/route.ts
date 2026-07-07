@@ -1,4 +1,4 @@
-// File: /home/gt822001/Desktop/genai-chat-app./genai-chat-app/app/api/chat/route.js
+// File: /home/gt822001/Desktop/AI/app/api/chat/route.js
 import * as entry from '../../../../../app/api/chat/route.js'
 import type { NextRequest } from 'next/server.js'
 

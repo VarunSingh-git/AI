@@ -1,4 +1,4 @@
-// File: /home/gt822001/Desktop/genai-chat-app./genai-chat-app/app/layout.jsx
+// File: /home/gt822001/Desktop/AI/app/layout.jsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
