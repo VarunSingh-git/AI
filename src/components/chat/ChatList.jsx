@@ -11,7 +11,6 @@ function LoadingBubble() {
         A
       </span>
       <span className="inline-flex items-center gap-1">
-        Astra is thinking
         <span className="flex gap-0.5">
           <span className="h-1 w-1 animate-bounce rounded-full bg-stone-400 [animation-delay:-0.2s]" />
           <span className="h-1 w-1 animate-bounce rounded-full bg-stone-400 [animation-delay:-0.1s]" />
@@ -44,13 +43,16 @@ export default function ChatList({ messages, isLoading }) {
 
   // Only auto-scroll to the newest message if the user was already
   // at the bottom — never yank them down while reading older messages.
+  const lastMessage = messages[messages.length - 1];
+
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    if (isAtBottom) {
-      el.scrollTop = el.scrollHeight;
-    }
-  }, [messages.length, isLoading, isAtBottom]);
+    if (!isAtBottom) return;
+
+    containerRef.current?.scrollTo({
+      top: containerRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [lastMessage?.content, isLoading, isAtBottom]);
 
   const scrollToLatest = () => {
     const el = containerRef.current;

@@ -42,14 +42,37 @@ export async function POST(req) {
     {question}
     `);
 
-    const chain = prompt.pipe(model); // .pipe() is a function who is connect promptTemplate() -> ollamaChat()
+    const chain = prompt.pipe(model); 
+    // .pipe() is a function who is connect promptTemplate() -> ollamaChat()
 
-    const response = await chain.invoke({
-      question: messages,
+    const response = await chain.stream({
+      question: messages
+    })
+
+    console.log("response", response)
+    console.log("chain",chain);
+    
+    const encoder = new TextEncoder();
+
+    const readableStream = new ReadableStream({
+      async start(controller) {
+        for await (const chunk of response) {
+          console.log("chunk", JSON.stringify(chunk.content))
+
+          controller.enqueue(
+            encoder.encode(chunk.content)
+          );
+        }
+
+        controller.close();
+      },
     });
+    console.log("readableStream", readableStream);
 
-    return Response.json({
-      reply: response.content,
+    return new Response(readableStream, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+      },
     });
 
   } catch (error) {

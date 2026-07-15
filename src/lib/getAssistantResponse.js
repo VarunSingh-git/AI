@@ -1,4 +1,4 @@
-export async function getAssistantResponse(messages) {
+export async function getAssistantResponse(messages, onChunk) {
     const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -10,7 +10,19 @@ export async function getAssistantResponse(messages) {
         throw new Error(`Chat request failed with status ${response.status}`);
     }
 
-    const data = await response.json();
-    console.log("data", data)
-    return data.reply;
+    const reader = response.body.getReader()
+    console.log("reader",reader)
+    const decoder = new TextDecoder()
+    
+    while (true) {
+        const a = await reader.read()
+        console.log("reader.read() value ---------------->",a)
+        const { done, value } = a
+
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+
+        onChunk(chunk)
+    }
 }

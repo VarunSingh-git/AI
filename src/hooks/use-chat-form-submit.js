@@ -5,7 +5,7 @@ import { useState } from "react";
  * while waiting on the LLM, the current input value, and the submit
  * handler that ties them together.
  *
- * @param {(messages: Array) => Promise<string>} getAssistantResponse
+ * @param {(messages: Array) => Promise<string>} getAssistantResponse(messages, onChunk)
  */
 export default function useChatFormSubmit(getAssistantResponse) {
   const [messages, setMessages] = useState([]);
@@ -21,13 +21,35 @@ export default function useChatFormSubmit(getAssistantResponse) {
     const userMessage = { role: "user", content: trimmed };
     const nextMessages = [...messages, userMessage];
 
+    console.log("nextMessages", nextMessages)
+
     setMessages(nextMessages);
     setInputValue("");
     setIsLoading(true);
 
     try {
-      const reply = await getAssistantResponse(nextMessages);
-      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+      {
+        nextMessages && setMessages([
+          ...nextMessages,
+          {
+            role: "assistant",
+            content: "",
+          },
+        ]);
+      }
+
+      await getAssistantResponse(nextMessages, (chunk) => {
+        setMessages((prev) => {
+          const lastIndex = prev.length - 1;
+
+          return prev.map((msg, index) =>
+            index === lastIndex
+              ? { ...msg, content: msg.content + chunk }
+              : msg
+          );
+        });
+      })
+
     } catch (error) {
       setMessages((prev) => [
         ...prev,
